@@ -1,11 +1,312 @@
 <!doctype html>
-<html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101916"><title>VELOCITY — Training Ground</title></head><body>
-<canvas id="game" aria-label="3D Ego-Shooter Arena"></canvas>
-<div id="vignette"></div><div id="damage"></div>
-<header><a class="brand" href="./">V<span> / </span>VELOCITY</a><div class="header-right"><span class="live-dot"></span> TRAINING GROUND <span class="tag">01</span></div></header>
-<div id="hud" class="hidden"><div class="top-stats"><div><small>ELIMINIERUNGEN</small><strong id="kills">00</strong></div><div class="wave"><small>WELLE</small><strong id="wave">01</strong></div><div><small>BESTLEISTUNG</small><strong id="best">00</strong></div></div><div id="announcement"></div><div id="crosshair"><i></i><i></i><i></i><i></i></div><div id="hitmarker">╳</div><div id="killfeed"></div><div class="bottom-hud"><div class="health"><small>VITALWERTE</small><div><span class="plus">+</span> <strong id="health">100</strong></div><div class="health-track"><i id="healthbar"></i></div></div><div class="weapon-info"><small>VX-7 <span> // AUTOMATIK</span></small><div><strong id="ammo">30</strong><span> / ∞</span></div><small id="reload-hint">R · NACHLADEN</small></div></div><div class="hud-footer">WASD BEWEGEN <b>·</b> SHIFT SPRINTEN <b>·</b> LEERTASTE SPRINGEN</div></div>
-<main id="menu"><div class="eyebrow"><span></span> SOLO ARENA / BROWSER EDITION</div><h1>MOVE FAST.<br><em>HIT HARD.</em></h1><p class="intro">Dein Rhythmus. Dein Reflex. Deine Arena.<br>Ein schneller Shooter mit direktem Feedback.</p><button id="start" class="primary">ARENA BETRETEN <span>&gt;</span></button><div class="menu-controls"><div><kbd>W A S D</kbd><small>BEWEGEN</small></div><div><kbd>MAUS</kbd><small>ZIELEN & SCHIESSEN</small></div><div><kbd>R</kbd><small>NACHLADEN</small></div></div><p class="tip">Kopfhörer auf. Maus bereit. <span>Desktop empfohlen.</span></p><div class="menu-index">01 <span>/ THE FOUNDRY</span></div></main>
-<section id="pause" class="overlay hidden"><div class="panel"><span class="eyebrow">TAKE A BREATH</span><h2>PAUSIERT.</h2><p>Zurück in die Arena?</p><button id="resume" class="primary">WEITERSPIELEN <span>&gt;</span></button><button id="back" class="secondary">ZUM MENÜ</button><small>ESC gibt die Maus frei und pausiert das Spiel.</small></div></section>
-<section id="end" class="overlay hidden"><div class="panel"><span class="eyebrow">TRAINING ABGESCHLOSSEN</span><h2>NOCH EINE<br><em>RUNDE?</em></h2><div class="results"><div><strong id="final-kills">0</strong><small>ELIMINIERUNGEN</small></div><div><strong id="final-wave">1</strong><small>WELLE ERREICHT</small></div></div><button id="restart" class="primary">ERNEUT ANTRETEN <span>&gt;</span></button></div></section>
-<footer id="menu-footer"><span>THE FOUNDRY <i>—</i> INDUSTRIAL COMBAT SIMULATION</span><label><input id="sound" type="checkbox" checked> AUDIO AN</label><span>ORIGINAL PROTOTYPE · V.01</span></footer><div id="error" class="hidden"></div>
-<script type="module" src="/src/main.js"></script></body></html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#101916" />
+    <meta
+      name="description"
+      content="VELOCITY: ein schneller Arena-Shooter mit Dash, Slides und acht Wellen. Kostenlos im Desktop-Browser."
+    />
+    <title>VELOCITY / Overdrive</title>
+  </head>
+  <body>
+    <canvas id="game" aria-label="3D-Spielarena"></canvas>
+    <div id="vignette"></div>
+    <div id="damage"></div>
+    <header id="header">
+      <a class="brand" href="./"
+        >V<span>/</span>VELOCITY <sup>OVERDRIVE</sup></a
+      >
+      <div class="header-right">
+        <i></i> SOLO RUN <span class="tag">V.02</span>
+      </div>
+    </header>
+    <main id="menu">
+      <div class="menu-copy">
+        <div class="eyebrow">
+          <span></span> THE FOUNDRY / 8 WELLEN / EIN ZIEL
+        </div>
+        <h1>FIND YOUR<br /><em>OVERDRIVE.</em></h1>
+        <p class="intro">
+          Bleib in Bewegung. Brich ihre Formation.<br />Baue deinen Run. Besiege
+          den Aufseher.
+        </p>
+        <div
+          id="difficulty"
+          class="difficulty"
+          role="group"
+          aria-label="Schwierigkeit"
+        >
+          <button data-difficulty="relaxed">ENTSPANNT</button
+          ><button data-difficulty="standard" class="selected">STANDARD</button
+          ><button data-difficulty="veteran">VETERAN</button>
+        </div>
+        <p id="difficulty-description" class="muted"></p>
+        <button id="start" class="primary">RUN STARTEN <span>→</span></button>
+        <div class="menu-links">
+          <button id="controls-open" class="text-button">STEUERUNG</button
+          ><button id="settings-open" class="text-button">EINSTELLUNGEN</button
+          ><span>BEST <b id="menu-best">0</b></span>
+        </div>
+        <p class="desktop-hint">
+          Maus + Tastatur · Kopfhörer empfohlen · Kein Multiplayer
+        </p>
+      </div>
+      <aside class="loadout">
+        <div class="eyebrow">DEIN ARSENAL <span class="rule"></span> 01—03</div>
+        <div class="loadout-item">
+          <b>01</b>
+          <div>
+            <h3>VX-7</h3>
+            <p>Präzision. Kontrolle. Mittlere Distanz.</p>
+          </div>
+          <span class="weapon-glyph">━╦━━</span>
+        </div>
+        <div class="loadout-item">
+          <b>02</b>
+          <div>
+            <h3>KITE-9</h3>
+            <p>Hohe Feuerrate. Immer in Bewegung.</p>
+          </div>
+          <span class="weapon-glyph cyan">━╦━</span>
+        </div>
+        <div class="loadout-item">
+          <b>03</b>
+          <div>
+            <h3>BREACH</h3>
+            <p>Neun Pellets. Ein klares Statement.</p>
+          </div>
+          <span class="weapon-glyph orange">━━╦━━</span>
+        </div>
+        <div class="run-note">
+          <span>BEWEGUNG IST DEINE DECKUNG.</span>
+          <p>
+            Dash durch Feuerlinien. Slide um Ecken.<br />Gegnerische Geschosse
+            sind ausweichbar.
+          </p>
+        </div>
+      </aside>
+    </main>
+    <div id="hud" class="hidden">
+      <div class="run-stats">
+        <div><small>SCORE</small><strong id="score">000000</strong></div>
+        <div class="wave">
+          <small>WELLE</small
+          ><strong
+            ><span id="wave">01</span><span class="dim"> / 08</span></strong
+          >
+        </div>
+        <div><small>VERBLEIBEND</small><strong id="remaining">04</strong></div>
+      </div>
+      <div id="boss-hud" class="hidden">
+        <small>DER AUFSEHER <span id="boss-phase">PHASE I</span></small>
+        <div><i id="boss-health"></i></div>
+      </div>
+      <div id="announcement"><strong></strong><span></span></div>
+      <div id="combo">
+        <strong id="combo-value">×1</strong><span id="combo-label">FLOW</span>
+        <div><i id="combo-bar"></i></div>
+      </div>
+      <canvas
+        id="radar"
+        width="150"
+        height="150"
+        aria-label="Radar: Gegner in deiner Nähe"
+      ></canvas>
+      <div id="crosshair"><i></i><i></i><i></i><i></i><b></b></div>
+      <div id="hitmarker"><i></i><i></i><i></i><i></i></div>
+      <div id="damage-direction"><i></i></div>
+      <div id="damage-numbers"></div>
+      <div id="killfeed"></div>
+      <div id="interaction"></div>
+      <div id="movement-state"></div>
+      <div id="lock-hint" class="hidden">
+        Klicken, um die Maus zu aktivieren · ESC pausiert
+      </div>
+      <div class="bottom-hud">
+        <div class="vitals">
+          <small>VITALWERTE <span id="regen-status"></span></small>
+          <div>
+            <span class="plus">+</span><strong id="health">100</strong
+            ><span class="dim" id="max-health">/ 100</span>
+          </div>
+          <div class="health-track"><i id="healthbar"></i></div>
+          <div class="abilities">
+            <span><kbd>E</kbd> DASH <b id="dash-status">BEREIT</b></span
+            ><span><kbd>G</kbd> GRANATE <b id="grenades">2</b></span>
+          </div>
+        </div>
+        <div class="weapon-info">
+          <small id="weapon-label">STURMGEWEHR</small>
+          <h3 id="weapon-name">VX-7</h3>
+          <div>
+            <strong id="ammo">30</strong><span id="ammo-max">/ 30</span
+            ><span class="infinite">∞ RESERVE</span>
+          </div>
+          <div class="reload-track"><i id="reload-bar"></i></div>
+          <small id="reload-hint">R · NACHLADEN</small>
+          <div id="weapon-slots">
+            <span class="active">1 VX-7</span><span>2 KITE-9</span
+            ><span>3 BREACH</span>
+          </div>
+        </div>
+      </div>
+      <div class="hud-footer">
+        WASD BEWEGEN <b>·</b> SHIFT SPRINT <b>·</b> STRG SLIDE <b>·</b> E DASH
+        <b>·</b> V NAHKAMPF <b>·</b> ESC PAUSE
+      </div>
+      <div id="tutorial">
+        <span>01 / BLEIB IN BEWEGUNG</span>
+        <p>
+          WASD bewegen · Shift sprinten · E dashen<br />Linke Maustaste feuern ·
+          Rechte Maustaste zielen<br />1 / 2 / 3 Waffen wechseln · G Granate
+        </p>
+      </div>
+    </div>
+    <section id="pause" class="overlay hidden" aria-labelledby="pause-title">
+      <div class="panel">
+        <div class="eyebrow">TAKE A BREATH</div>
+        <h2 id="pause-title">PAUSIERT.</h2>
+        <p id="pause-description">Dein Run wartet auf dich.</p>
+        <button id="resume" class="primary">WEITERSPIELEN <span>→</span></button
+        ><button id="pause-settings" class="secondary">EINSTELLUNGEN</button
+        ><button id="pause-controls" class="secondary">STEUERUNG</button
+        ><button id="back" class="text-button">RUN BEENDEN & ZUM MENÜ</button
+        ><small>ESC gibt die Maus frei und pausiert die Simulation.</small>
+      </div>
+    </section>
+    <section
+      id="upgrade"
+      class="overlay hidden"
+      aria-labelledby="upgrade-title"
+    >
+      <div class="upgrade-panel">
+        <div class="eyebrow">ZWISCHEN DEN WELLEN / DEIN BUILD</div>
+        <h2 id="upgrade-title">WELLE GESCHAFFT.</h2>
+        <p id="wave-summary"></p>
+        <div id="upgrade-cards"></div>
+        <p class="upgrade-tip">
+          Wähle eine Verbesserung mit 1, 2, 3 oder per Klick.<br />Magazine und
+          Granaten aufgefüllt · +35 Gesundheit
+        </p>
+        <button id="upgrade-menu" class="text-button">RUN BEENDEN</button>
+      </div>
+    </section>
+    <section id="end" class="overlay hidden" aria-labelledby="end-title">
+      <div class="end-panel">
+        <div class="eyebrow" id="end-eyebrow">RUN ABGESCHLOSSEN</div>
+        <h2 id="end-title">NOCH EIN<br /><em>VERSUCH?</em></h2>
+        <p id="end-description"></p>
+        <div class="results">
+          <div><strong id="final-score">0</strong><small>SCORE</small></div>
+          <div>
+            <strong id="final-kills">0</strong><small>ELIMINIERUNGEN</small>
+          </div>
+          <div>
+            <strong id="final-accuracy">0%</strong><small>TREFFERQUOTE</small>
+          </div>
+          <div><strong id="final-wave">1</strong><small>WELLE</small></div>
+          <div>
+            <strong id="final-combo">×1</strong><small>BESTER FLOW</small>
+          </div>
+          <div>
+            <strong id="final-time">0:00</strong><small>AKTIVE ZEIT</small>
+          </div>
+        </div>
+        <p id="record-text"></p>
+        <button id="restart" class="primary">NEUER RUN <span>→</span></button
+        ><button id="end-menu" class="text-button">ZUM MENÜ</button>
+      </div>
+    </section>
+    <dialog id="settings-dialog">
+      <form method="dialog">
+        <button class="dialog-close" aria-label="Schließen">×</button>
+      </form>
+      <div class="eyebrow">DEIN SPIELGEFÜHL</div>
+      <h2>EINSTELLUNGEN.</h2>
+      <label for="sensitivity"
+        >MAUSEMPFINDLICHKEIT <output id="sensitivity-value"></output></label
+      ><input
+        id="sensitivity"
+        type="range"
+        min="0.25"
+        max="2.5"
+        step="0.05"
+      /><label for="fov">SICHTFELD <output id="fov-value"></output></label
+      ><input id="fov" type="range" min="70" max="105" step="1" /><label
+        for="volume"
+        >LAUTSTÄRKE <output id="volume-value"></output></label
+      ><input id="volume" type="range" min="0" max="1" step="0.05" /><label
+        class="check"
+        ><input id="sound" type="checkbox" /> AUDIO AKTIV</label
+      ><label class="check"
+        ><input id="shake" type="checkbox" /> KAMERA-IMPULSE &
+        KOPFBEWEGUNG</label
+      ><label for="quality">GRAFIKQUALITÄT</label
+      ><select id="quality">
+        <option value="low">Niedrig — ohne Schatten</option>
+        <option value="medium">Mittel — empfohlen</option>
+        <option value="high">Hoch — höhere Auflösung</option>
+      </select>
+      <p class="muted">
+        Wird automatisch auf diesem Gerät gespeichert.<br />Spielerischer
+        Rückstoß bleibt auch ohne Kamera-Impulse aktiv.
+      </p>
+    </dialog>
+    <dialog id="controls-dialog">
+      <form method="dialog">
+        <button class="dialog-close" aria-label="Schließen">×</button>
+      </form>
+      <div class="eyebrow">KNOW YOUR MOVES</div>
+      <h2>STEUERUNG.</h2>
+      <dl class="controls-list">
+        <div>
+          <dt>W A S D</dt>
+          <dd>Bewegen</dd>
+        </div>
+        <div>
+          <dt>MAUS / LMT / RMT</dt>
+          <dd>Umsehen / Feuern / Zielen</dd>
+        </div>
+        <div>
+          <dt>SHIFT / STRG</dt>
+          <dd>Sprinten / Sliden (im Sprint)</dd>
+        </div>
+        <div>
+          <dt>LEERTASTE</dt>
+          <dd>Springen; aus dem Slide springen</dd>
+        </div>
+        <div>
+          <dt>E</dt>
+          <dd>Dash in Bewegungsrichtung, sonst vorwärts</dd>
+        </div>
+        <div>
+          <dt>1 / 2 / 3 · MAUSRAD</dt>
+          <dd>Waffe wechseln; unterbricht Nachladen</dd>
+        </div>
+        <div>
+          <dt>R / G / V</dt>
+          <dd>Nachladen / Granate / Nahkampf</dd>
+        </div>
+        <div>
+          <dt>M / ESC</dt>
+          <dd>Audio umschalten / Pause</dd>
+        </div>
+      </dl>
+      <p class="muted">
+        Leuchtende Gegner kündigen Angriffe an. Violetten Zielstrahlen
+        ausweichen. Granaten und Deckung nutzen. Gesundheit regeneriert nach 4
+        Sekunden ohne Schaden. Der Boss-Schockwelle kannst du mit einem Sprung
+        entkommen.
+      </p>
+    </dialog>
+    <footer id="menu-footer">
+      <span>THE FOUNDRY <i>—</i> COMBAT LAB</span
+      ><span>ORIGINAL AUDIO & ASSETS · DESKTOP BROWSER</span
+      ><span>VERSION 02 / OVERDRIVE</span>
+    </footer>
+    <div id="error" class="hidden" role="alert"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
